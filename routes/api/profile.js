@@ -4,6 +4,7 @@ const Profile = require('../models/Profile');
 const User = require('../models/Users');
 const auth = require('../../middleware/auth');
 const { check, validationResult } = require('express-validator');
+
 // route get api/profile/me
 // desc get current users profile
 // access private
@@ -29,8 +30,10 @@ router.post(
   '/',
   [
     auth,
-    [check('status', 'Status is required').not().isEmpty()],
-    check('skills', 'Skills is required').not().isEmpty()
+    [
+      check('status', 'Status is required').not().isEmpty(),
+      check('skills', 'Skills is required').not().isEmpty()
+    ]
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -89,6 +92,98 @@ router.post(
     } catch (err) {
       console.log(err.message);
       res.status(500).send('server error');
+    }
+  }
+);
+// route get api/profile
+// desc get all users profile
+// access public
+
+router.get('/', async (req, res) => {
+  try {
+    const profiles = await Profile.find().populate('user', ['name', 'avatar']);
+    res.json(profiles);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+// route get api/profile/users/:user_id
+// desc get profile by user id
+// access public
+
+router.get('/users/:user_id', async (req, res) => {
+  try {
+    const profile = await Profile.findOne({
+      user: req.params.user_id
+    }).populate('user', ['name', 'avatar']);
+    if (!profile)
+      return res.status(400).json({ mgs: 'There is no profile for this user' });
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind === 'ObjectId') {
+      return res.status(400).json({ mgs: 'Profile not Found' });
+    }
+    res.status(500).send('Server Error');
+  }
+});
+
+// route delete api/profile/users/:user_id
+// desc delete profile,user,post by user id
+// access public
+
+router.delete('/', auth, async (req, res) => {
+  try {
+    // @remove users,posts
+    // remove profile
+    await Profile.findOneAndRemove({ user: req.user.id });
+    // remove user
+    await User.findOneAndRemove({ _id: req.user.id });
+
+    res.json({ msg: 'User removed' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// route put api/profile/experience
+// desc add profile experience
+// access private
+
+router.put(
+  '/experience',
+  [
+    auth,
+    [
+      check('title', 'Title is required').not().isEmpty(),
+      check('company', 'Company is required').not().isEmpty(),
+      check('from', 'From date is required').not().isEmpty()
+    ]
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+      const {
+        title,
+        comapany,
+        location,
+        from,
+        to,
+        current,
+        description
+      } = req.body;
+      const newExp = {
+        title,
+        company,
+        location,
+        from,
+        to,
+        current,
+        description
+      };
     }
   }
 );
