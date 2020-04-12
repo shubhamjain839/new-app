@@ -1,6 +1,0 @@
-{
-  "mongoURI": "mongodb+srv://developer:shubham839@devconnector-qw1ax.mongodb.net/test?retryWrites=true&w=majority",
-  "jwtSecret": "coronavirus",
-  "githubClientId": "ce390267802bf25985b4",
-  "githubSecret": "83a770a22b49450037f139b8ee9024982e3bba11"
-}
