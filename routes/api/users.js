@@ -6,6 +6,7 @@ const User = require('../models/Users');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const normalize = require('normalize-url');
 
 // route post api/users/
 // desc add new user
@@ -32,11 +33,14 @@ router.post(
           .status(400)
           .json({ errors: [{ msg: 'User already exists' }] });
       }
-      const avatar = gravatar.url(email, {
-        s: '200',
-        r: 'pg',
-        d: 'mm'
-      });
+      const avatar = normalize(
+        gravatar.url(email, {
+          s: '200',
+          r: 'pg',
+          d: 'mm'
+        }),
+        { forceHttps: true }
+      );
 
       user = new User({
         name,
