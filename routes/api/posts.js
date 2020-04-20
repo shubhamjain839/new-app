@@ -6,7 +6,7 @@ const Post = require('../models/Post');
 const Profile = require('../models/Profile');
 const User = require('../models/Users');
 
-//route post api/post
+//route post api/posts
 //desc create a post
 //access private
 
@@ -36,14 +36,14 @@ router.post(
   }
 );
 
-//route get api/post
+//route get api/posts
 //desc get a post
 //access private
 
 router.get('/', auth, async (req, res) => {
   try {
     const posts = await Post.find().sort({ date: -1 });
-    res.json({ posts });
+    res.json(posts);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
@@ -60,7 +60,7 @@ router.get('/:id', auth, async (req, res) => {
     if (!post) {
       return res.status(404).json({ msg: 'post not found' });
     }
-    res.json({ post });
+    res.json(post);
   } catch (err) {
     console.error(err.message);
     if (err.kind === 'ObjectId') {
