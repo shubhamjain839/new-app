@@ -50,7 +50,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-//route get api/post/:id
+//route get api/posts/:id
 //desc get a post with id
 //access private
 
@@ -70,7 +70,7 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-//route delete api/post/:id
+//route delete api/posts/:id
 //desc delete a post with id
 //access private
 
@@ -95,7 +95,7 @@ router.delete('/:id', auth, async (req, res) => {
     res.status(500).send('Server error');
   }
 });
-//route put api/post/like/:id
+//route put api/posts/like/:id
 //desc add a like to post with id
 //access private
 
@@ -116,7 +116,7 @@ router.put('/like/:id', auth, async (req, res) => {
     res.status(400).send('Server Error');
   }
 });
-//route put api/post/unlike/:id
+//route put api/posts/unlike/:id
 //desc unlike a like to post with id
 //access private
 
